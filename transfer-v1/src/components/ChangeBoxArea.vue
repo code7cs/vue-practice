@@ -28,6 +28,11 @@
         </li>
       </ul>
     </div>
+    <div>
+      Filter:
+      <input type="text">
+    </div>
+    <br>
   </div>
 </template>
 <script>
