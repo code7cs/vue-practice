@@ -16,6 +16,7 @@
       </div>
       <span>{{selectItemNumber}}/{{data.length}}</span>
     </div>
+
     <div class="card-body pre-scrollable">
       <ul>
         <li v-for="item in data" :key="item.id">
@@ -28,11 +29,10 @@
         </li>
       </ul>
     </div>
-    <div>
+    <!-- <div>
       Filter:
-      <input type="text">
-    </div>
-    <br>
+      <input type="text" v-model="filterKey">
+    </div>-->
   </div>
 </template>
 <script>
@@ -40,6 +40,17 @@ export default {
   name: "ChangeBox",
   props: ["title", "data"],
   computed: {
+    // filterSourceList() {
+    //   // `this` points to the vm instance
+    //   var filterKey = this.filterKey;
+    //   var data = this.data;
+    //   console.log(this.data);
+    //   //在使用filter时需要注意的是，前面调用的是需要使用filter的数组，而给filter函数传入的是数组中的每个item，也就是说filter里面的函数，是每个item要去做的，并将每个结果返回。
+    //   return data.filter(
+    //     item => item.name.toLowerCase().indexOf(filterKey.toLowerCase()) != -1
+    //   );
+    // },
+
     // 选择的数量
     selectItemNumber() {
       return this.data.filter(item => item.isSelected).length;

@@ -2,8 +2,45 @@
   <div class="container">
     <div class="row">
       <div class="col-md-4">
-        <change-box-area :title="sourceTitle" :data="sourceList"></change-box-area>
+        <div class="card">
+          <div class="card-header clearfix">
+            <div>
+              <div class="checkbox">
+                <label>
+                  <input
+                    :disabled="sourceList.length === 0"
+                    type="checkbox"
+                    @click="toggleSourceAll()"
+                    :checked="selectedSourceAllStatus"
+                  >
+                  <span>{{sourceTitle}}</span>
+                </label>
+              </div>
+            </div>
+            <span>{{selectSourceItemNumber}}/{{sourceList.length}}</span>
+          </div>
+
+          <div class="card-body pre-scrollable">
+            <ul>
+              <li v-for="item in filterSourceList" :key="item.id">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" v-model="item.isSelected">
+                    {{item.name}}
+                  </label>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <br>
+          <div>
+            Filter:
+            <input type="text" v-model="filterSourceKey">
+          </div>
+          <br>
+        </div>
       </div>
+
       <div class="col-md-4 text-center">
         <br>
         <p>
@@ -38,7 +75,43 @@
         </p>
       </div>
       <div class="col-md-4">
-        <change-box-area :title="targetTitle" :data="targetList"></change-box-area>
+        <div class="card">
+          <div class="card-header clearfix">
+            <div>
+              <div class="checkbox">
+                <label>
+                  <input
+                    :disabled="targetList.length === 0"
+                    type="checkbox"
+                    @click="toggleTargetAll()"
+                    :checked="selectedTargetAllStatus"
+                  >
+                  <span>{{targetTitle}}</span>
+                </label>
+              </div>
+            </div>
+            <span>{{selectTargetItemNumber}}/{{targetList.length}}</span>
+          </div>
+
+          <div class="card-body pre-scrollable">
+            <ul>
+              <li v-for="item in filterTargetList" :key="item.id">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" v-model="item.isSelected">
+                    {{item.name}}
+                  </label>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <br>
+          <div>
+            Filter:
+            <input type="text" v-model="filterTargetKey">
+          </div>
+          <br>
+        </div>
       </div>
     </div>
   </div>
@@ -71,6 +144,8 @@ export default {
   name: "ChangeBox",
   data() {
     return {
+      filterSourceKey: "",
+      filterTargetKey: "",
       sourceTitle: " 待选表",
       targetTitle: " 已选表",
       sourceList: dataList,
@@ -78,6 +153,26 @@ export default {
     };
   },
   methods: {
+    toggleSourceAll() {
+      let len = this.sourceList.length;
+      let slen = this.sourceList.filter(item => item.isSelected).length;
+      if (len !== slen) {
+        this.sourceList.map(item => (item.isSelected = true));
+      } else {
+        this.sourceList.map(item => (item.isSelected = false));
+      }
+    },
+
+    toggleTargetAll() {
+      let len = this.targetList.length;
+      let slen = this.targetList.filter(item => item.isSelected).length;
+      if (len !== slen) {
+        this.targetList.map(item => (item.isSelected = true));
+      } else {
+        this.targetList.map(item => (item.isSelected = false));
+      }
+    },
+
     exchange(fd, td) {
       let selectedItem = fd
         .filter(item => item.isSelected)
@@ -116,6 +211,51 @@ export default {
     }
   },
   computed: {
+    filterSourceList() {
+      // `this` points to the vm instance
+      var filterKey = this.filterSourceKey;
+      //在使用filter时需要注意的是，前面调用的是需要使用filter的数组，而给filter函数传入的是数组中的每个item，也就是说filter里面的函数，是每个item要去做的，并将每个结果返回。
+      return this.sourceList.filter(
+        item => item.name.toLowerCase().indexOf(filterKey.toLowerCase()) != -1
+      );
+    },
+    filterTargetList() {
+      // `this` points to the vm instance
+      var filterKey = this.filterTargetKey;
+      //在使用filter时需要注意的是，前面调用的是需要使用filter的数组，而给filter函数传入的是数组中的每个item，也就是说filter里面的函数，是每个item要去做的，并将每个结果返回。
+      return this.targetList.filter(
+        item => item.name.toLowerCase().indexOf(filterKey.toLowerCase()) != -1
+      );
+    },
+
+    selectSourceItemNumber() {
+      return this.sourceList.filter(item => item.isSelected).length;
+    },
+    selectTargetItemNumber() {
+      return this.targetList.filter(item => item.isSelected).length;
+    },
+    // 全选状态
+    selectedSourceAllStatus() {
+      if (
+        this.selectItemNumber === this.sourceList.length &&
+        this.selectItemNumber !== 0
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    selectedTargetAllStatus() {
+      if (
+        this.selectItemNumber === this.targetList.length &&
+        this.selectItemNumber !== 0
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
     sourceRefNum() {
       return this.sourceList.filter(item => item.isSelected).length;
     },
@@ -125,3 +265,13 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+ul {
+  list-style: none;
+  padding: 0;
+}
+.checkbox {
+  margin: 0;
+}
+</style>
