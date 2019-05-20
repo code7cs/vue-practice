@@ -1,34 +1,18 @@
 <template>
   <div class="container">
     <div class="row">
+      <!-- 字段列表弹窗 -->
+      <!-- <div class="mask" v-show="maskShow" @click="setMaskShow"></div>
+      <div class="card child" id="child" v-show="maskShow">-->
+      <!-- <change-list :title="fieldTitle" :data="fieldList"></change-list> -->
+      <!-- <button class="btn btn-danger" @click="setMaskShow">Close</button> -->
+      <!-- </div> -->
+
+      <!-- 待选表 -->
       <div class="col-md-4">
-        <div class="card">
-          <div class="card-header">
-            <span>{{ sourceTitle }}</span>
-            <span>{{selectSourceItemNumber}}/{{sourceList.length}}</span>
-          </div>
-
-          <div class="card-body pre-scrollable">
-            <ul>
-              <li v-for="item in filterSourceList" :key="item.id">
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox" v-model="item.isSelected">
-                    <a ondblclick="location='//www.jb51.net'">{{item.name}}</a>
-                  </label>
-                </div>
-              </li>
-            </ul>
-          </div>
-          <br>
-          <div>
-            Filter:
-            <input type="text" v-model="filterSourceKey">
-          </div>
-          <br>
-        </div>
+        <change-list :title="sourceTitle" :data="sourceList"></change-list>
       </div>
-
+      <!-- 穿梭按钮 -->
       <div class="col-md-4 text-center">
         <br>
         <p>
@@ -62,55 +46,46 @@
           >&lt;&lt;</button>
         </p>
       </div>
-
+      <!-- 已选表 -->
       <div class="col-md-4">
-        <div class="card">
-          <div class="card-header">
-            <span>{{targetTitle}}</span>
-            <span>{{selectTargetItemNumber}}/{{targetList.length}}</span>
-          </div>
-
-          <div class="card-body pre-scrollable">
-            <ul>
-              <li v-for="item in filterTargetList" :key="item.id">
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox" v-model="item.isSelected">
-                    {{item.name}}
-                  </label>
-                </div>
-              </li>
-            </ul>
-          </div>
-          <br>
-          <div>
-            Filter:
-            <input type="text" v-model="filterTargetKey">
-          </div>
-          <br>
-        </div>
+        <change-list :title="targetTitle" :data="targetList"></change-list>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import ChangeList from "./ChangeList";
+
 let dataList = Array.from({ length: 100 }, (v, index) => ({
   id: index,
   isSelected: false,
-  name: ` tableName ${index + 1}`
+  name: ` tableName${index + 1}`
 }));
+
+// let fieldList = Array.from({ length: 5 }, (v, index) => ({
+//   id: index,
+//   isSelected: false,
+//   name: ` columnName${index + 1}`
+// }));
+
 // console.log(dataList);
 
 export default {
+  components: {
+    ChangeList
+  },
+
   data() {
     return {
-      filterSourceKey: "",
-      filterTargetKey: "",
       sourceTitle: " 待选表 ",
       targetTitle: " 已选表 ",
       sourceList: dataList,
       targetList: []
+      // maskShow: false,
+      // 字段列表
+      // fieldTitle: " 字段 ",
+      // fieldList: fieldList
     };
   },
   methods: {
@@ -148,29 +123,12 @@ export default {
     allToSource() {
       this.targetList = this.exchangeAll(this.targetList, this.sourceList);
     }
+    // setMaskShow(maskShow) {
+    //   this.maskShow = maskShow;
+    // }
   },
 
   computed: {
-    filterSourceList() {
-      var filterKey = this.filterSourceKey;
-      return this.sourceList.filter(
-        item => item.name.toLowerCase().indexOf(filterKey.toLowerCase()) != -1
-      );
-    },
-    filterTargetList() {
-      var filterKey = this.filterTargetKey;
-      return this.targetList.filter(
-        item => item.name.toLowerCase().indexOf(filterKey.toLowerCase()) != -1
-      );
-    },
-
-    selectSourceItemNumber() {
-      return this.sourceList.filter(item => item.isSelected).length;
-    },
-    selectTargetItemNumber() {
-      return this.targetList.filter(item => item.isSelected).length;
-    },
-
     sourceRefNum() {
       return this.sourceList.filter(item => item.isSelected).length;
     },
@@ -180,13 +138,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-ul {
-  list-style: none;
-  padding: 0;
-}
-.checkbox {
-  margin: 0;
-}
-</style>
